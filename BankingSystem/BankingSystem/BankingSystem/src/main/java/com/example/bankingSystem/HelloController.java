@@ -643,3 +643,556 @@ public class HelloController implements Initializable {
         }
         write_read();
     }
+
+
+
+    public void update(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Update.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+    public void delete(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Delete.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+
+    public void information(ActionEvent event) throws IOException {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TableView.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+
+    public void transferbtn(ActionEvent event) throws SQLException, IOException {
+        int value = 0;
+        int m=0;
+        String sql="select *from customer where id=?";
+        PreparedStatement stm=con.prepareStatement(sql);
+        stm.setString(1,txtsearch.getText());
+        ResultSet rt=stm.executeQuery();
+
+        while (rt.next()) {
+            boolean t=true;
+            try {
+                value= Integer.parseInt(txtamount.getText());
+            }
+            catch (Exception ex){
+                txtamount.setPromptText("please enter integer value only");
+                System.out.println("please enter integer value only");
+                t=false;
+
+            }
+            if (rt.getInt("deposit")<value){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("In sufficient Money");
+                alert.setContentText("You Don't Have enough money");
+                alert.showAndWait();
+            }
+
+            if(t && rt.getInt("deposit")>value){
+            int x=rt.getInt("deposit")-value;
+            String sql1="update customer set deposit ='"+x+"' where id=?";;
+            PreparedStatement st=con.prepareStatement(sql1);
+            st.setString(1,rt.getString("id"));
+            st.executeUpdate();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("You Successfully transfered ");
+                alert.setContentText("You Successfully transfered  " +value+"  Birr");
+                alert.showAndWait();
+                txtname.clear();
+                txtbalance.clear();
+                txtaccnumber.clear();
+                txtamount.clear();
+                txtto.clear();
+
+            }}
+        String sql2="select *from customer where id=?";
+        PreparedStatement stm2=con.prepareStatement(sql2);
+        stm2.setString(1,txtto.getText());
+        ResultSet rt2=stm2.executeQuery();
+        while (rt2.next()) {
+                m=rt2.getInt("deposit")+value;
+                String sql1 = "update customer set deposit ='" + m + "' where id=?";
+                PreparedStatement st = con.prepareStatement(sql1);
+                st.setString(1, txtto.getText());
+                st.executeUpdate();
+                System.out.println("m ="+m);
+
+        }
+        Date now = new Date(System.currentTimeMillis());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String formattedDate = formatter.format(now);
+        System.out.println("logout "+readLogedAccount());
+        String idd=readLogedAccount();
+        String id= idd.trim();
+        System.out.println("iddd  "+id);
+        System.out.println("e=id  "+id.equals("e"));
+        String sqltr= "INSERT INTO transactionTwo (cust_id,date,event,amount) VALUES(?,?,?,?)";
+        PreparedStatement preptr = con.prepareStatement(sqltr);
+        preptr.setString(1, txtsearch.getText());
+        preptr.setString(2, formattedDate);
+        preptr.setString(3, "transfer");
+        preptr.setString(4, txtamount.getText());
+        preptr.executeUpdate();
+
+
+        write_read();
+    }
+    @FXML
+    public void withdrawal(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("withdrawal.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+    public void addInfo(ActionEvent event) {
+    }
+
+    public void balance(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("balance.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+
+    public void mobilePackage(ActionEvent event) {
+    }
+
+    public void customer(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CreateAccountForEmployeAndUser.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+
+    public void employee(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Empoyee.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+
+    }
+
+    public void calaculateBalance(ActionEvent event) {
+    }
+    public void logOut(ActionEvent event) throws IOException, SQLException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginPage.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+        Date now = new Date(System.currentTimeMillis());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String formattedDate = formatter.format(now);
+        System.out.println("logout "+readLogedAccount());
+        String idd=readLogedAccount();
+         String id= idd.trim();
+        System.out.println("iddd  "+id);
+        System.out.println("e=id  "+id.equals("e"));
+        String sqltr= "INSERT INTO transaction (user_id,devent,tevent) VALUES(?,?,?)";
+        PreparedStatement preptr = con.prepareStatement(sqltr);
+        preptr.setString(1, id);
+        preptr.setString(2, formattedDate);
+        preptr.setString(3, "log out");
+        preptr.executeUpdate();
+
+
+        write_read();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        namecol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        idcol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        usernamecol.setCellValueFactory(new PropertyValueFactory<>("username"));
+        passcol.setCellValueFactory(new PropertyValueFactory<>("password"));
+        rolecol.setCellValueFactory(new PropertyValueFactory<>("role"));
+        ObservableList<String> list1 = FXCollections.observableArrayList( "employee", "customer");
+        roleempcu.setItems(list1);
+        roleempcu.getSelectionModel().select(0);
+            ObservableList<String> list = FXCollections.observableArrayList("superadmin","admin", "employee", "customer");
+            role.setItems(list);
+            role.getSelectionModel().select(0);
+
+            txtamount.setTextFormatter(new TextFormatter<>(change -> {
+            // Check if the new value is a numeric value
+            if (change.getControlNewText().matches("-?\\d*\\.?\\d+")) {
+                // Clear the Tooltip message if the new value is valid
+                txtamount.setTooltip(null);
+                return change;
+            } else {
+                // Display an error message using a Tooltip
+                Tooltip tooltip = new Tooltip("Please enter a numeric value");
+                txtamount.setTooltip(tooltip);
+                return null;
+            }
+        }));
+        txtdeposit.setTextFormatter(new TextFormatter<>(change -> {
+            // Check if the new value is a numeric value
+            if (change.getControlNewText().matches("-?\\d*\\.?\\d+")) {
+                // Clear the Tooltip message if the new value is valid
+                txtdeposit.setTooltip(null);
+                return change;
+            } else {
+                // Display an error message using a Tooltip
+                Tooltip tooltip = new Tooltip("Please enter a numeric value");
+                txtdeposit.setTooltip(tooltip);
+                return null;
+            }
+        }));
+    }
+    @FXML
+    void refresh(ActionEvent event) throws SQLException, IOException {
+        String sql = "select *from admin ";
+        PreparedStatement pt = con.prepareStatement(sql);
+        ResultSet res = pt.executeQuery();
+        BufferedWriter writer=new BufferedWriter(new FileWriter("output.txt"));
+        writer.write(String.format("%-10s %-20s %-20s %-10s\n", "ID","Name", "address", "Role"));
+        data.clear();
+        while (res.next()) {
+            data.add(new Account(res.getString("id"), res.getString("name"), res.getString("address"), res.getString("role")));
+            accountTable.setItems(data);
+            StringBuilder tableData = new StringBuilder();
+            tableData.append(String.format("%-10s %-20s  %-20s %-10s\n",res.getString("id"), res.getString("name"), res.getString("address"), res.getString("role")));
+            writer.write(tableData.toString());
+
+        }
+        writer.close();
+    }
+    public  void write_read() throws SQLException, IOException {
+        String sqlw = "SELECT admin.id,admin.name, admin.address ,admin.role,  " +
+                "transaction.devent, transaction.tevent FROM admin JOIN transaction ON " +
+                "admin.id = transaction.user_id ;";
+        PreparedStatement pt = con.prepareStatement(sqlw);
+        ResultSet res0 = pt.executeQuery();
+        String sqlwo = "SELECT *FROM user JOIN admin ;";
+        PreparedStatement pto = con.prepareStatement(sqlwo);
+        ResultSet res1 = pto.executeQuery();
+
+        BufferedWriter writer=new BufferedWriter(new FileWriter("output.txt"));
+        BufferedWriter writetran=new BufferedWriter(new FileWriter("transaction.txt"));
+        BufferedWriter writetranAll=new BufferedWriter(new FileWriter("transactionALL.txt"));
+
+        writer.write(String.format("%-10s %-20s  %-20s %-20s %-10s\n", "Name","ID", "Username", "Password", "Role"));
+        writetran.write(String.format("%-10s %-20s %-20s %-10s\n", "Name","date","tyepe transacion", "Role"));
+        writetranAll.write(String.format("%-10s %-20s %-20s %-10s\n", "Name","date","tyepe transacion", "Role"));
+
+        while (res1.next()) {
+            StringBuilder tableData = new StringBuilder();
+            tableData.append(String.format("%-10s %-20s %-20s %-20s %-10s\n",res1.getString("name"), res1.getString("id"), res1.getString("address"), res1.getString("password"), res1.getString("role")));
+            writer.write(tableData.toString());
+
+        }
+        while (res0.next()) {
+
+            StringBuilder tableData1 = new StringBuilder();
+            if (readLogedAccount().equals(res0.getString("id"))) {
+                tableData1.append(String.format("%-10s %-20s %-20s %-10s\n", res0.getString("name"), res0.getString("devent"), res0.getString("tevent"), res0.getString("role")));
+                writetran.write(tableData1.toString());
+            }
+        }
+        String sqlwos = "SELECT admin.id,admin.name, admin.address ,admin.role,  " +
+                "transaction.devent, transaction.tevent FROM admin JOIN transaction ON " +
+                "admin.id = transaction.user_id ;";
+        PreparedStatement ptos = con.prepareStatement(sqlwos);
+        ResultSet r = ptos.executeQuery();
+        while (r.next()) {
+
+                StringBuilder tableData2 = new StringBuilder();
+                tableData2.append(String.format("%-10s %-20s %-20s %-10s\n", r.getString("name"), r.getString("devent"), r.getString("tevent"), r.getString("role")));
+                writetranAll.write(tableData2.toString());
+                System.out.println(tableData2 + "output");
+
+        }
+
+        writer.close();
+        writetran.close();
+        writetranAll.close();
+    }
+
+    public void select(ActionEvent event) {
+        rolee=role.getSelectionModel().getSelectedItem().toString();
+        System.out.println(rolee);
+
+    }
+    public void selectad(ActionEvent event) {
+
+        rolee=roleempcu.getSelectionModel().getSelectedItem().toString();
+        System.out.println(rolee);
+    }
+    public  void readfile(ActionEvent event) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\123\\Desktop\\LoginPage5\\transaction.txt"));
+            String line;
+            System.out.println("read");
+            StringBuilder content = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+                System.out.println("re2");
+            }
+
+            System.out.println(content);
+            reader.close();
+            label.setText(content.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void  transactionbtn(ActionEvent event) throws SQLException {
+        String sql="select *from customer join transactionTwo on customer.id=transactionTwo.cust_id";
+        PreparedStatement st=con.prepareStatement(sql);
+        ResultSet rs=st.executeQuery();
+        StringBuilder content=new StringBuilder();
+        System.out.println("Event       amount           date \n");
+        content.append(String.format("%-20s %-30s %-30s %-30s\n","Name"   ,     "Event"  ,     "amount"   ,        "date"));
+        while (rs.next()){
+            content.append(String.format("%-20s %-30s %-30s %-30s\n",rs.getString("name"),rs.getString("event"),rs.getString("amount"),rs.getString("date")));
+
+        }
+        superlabel.setText(String.valueOf(content));
+    }
+    public  void logininfo(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("loginInformation.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+    public  void readfileSuper(ActionEvent event) throws IOException {
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\123\\Desktop\\LoginPage5\\transactionALL.txt"));
+            String line;
+            StringBuilder content = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            reader.close();
+            superlabel.setText(content.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public String readLogedAccount() {
+        String line = "logout";
+        StringBuilder content = new StringBuilder();
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\123\\Desktop\\LoginPage5\\account.txt"));
+            System.out.println("read");
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+                System.out.println("re2");
+            }
+       line= String.valueOf(content);
+            line=line.trim();
+            System.out.println("lineeeeeeeeeeeeeeee    "+line);
+            reader.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return line;
+    }
+    @FXML
+    void BackToCustmor(ActionEvent event) throws IOException, SQLException {
+        String sql = "select role from customer where id =?";
+        String c = readLogedAccount();
+        c=c.trim();
+        PreparedStatement st = con.prepareStatement(sql);
+        st.setString(1, c);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()) {
+            System.out.println(rs.getString("role").equals("customer"));
+            if (rs.getString("role").equals("customer")) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Customer.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                HelloApplication.stage.setTitle("Login Successfully!");
+                HelloApplication.stage.setScene(scene);
+            }
+        }
+
+        String sql2 = "select role from admin where id =?";
+        String c2 = readLogedAccount();
+        c2=c2.trim();
+        PreparedStatement st2 = con.prepareStatement(sql2);
+        st2.setString(1, c2);
+        ResultSet rs2 = st2.executeQuery();
+        while (rs2.next()) {
+            System.out.println("employee");
+
+            if (rs2.getString("role").equals("employee")) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Empoyee.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                HelloApplication.stage.setTitle("Login Successfully!");
+                HelloApplication.stage.setScene(scene);
+            }
+        }
+    }
+
+
+
+@FXML
+void  transacton(ActionEvent event) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("transaction.fxml"));
+    Scene scene = new Scene(fxmlLoader.load());
+    HelloApplication.stage.setTitle("Login Successfully!");
+    HelloApplication.stage.setScene(scene);
+}
+
+
+    @FXML
+    void balanceSearch(ActionEvent event) throws SQLException {
+    String sql="select *from customer where id=?";
+    PreparedStatement stm=con.prepareStatement(sql);
+    stm.setString(1,txtsearch.getText());
+    ResultSet rt=stm.executeQuery();
+    while (rt.next()) {
+        txtname.setText(rt.getString("name"));
+        txtbalance.setText(rt.getString("deposit"));
+        txtaccnumber.setText(rt.getString("accountNumber"));
+    }
+    }
+
+    @FXML
+    void withdrawalbtn (ActionEvent event) throws SQLException, IOException {
+        String sql="select *from customer where id=?";
+        PreparedStatement stm=con.prepareStatement(sql);
+        stm.setString(1,txtsearch.getText());
+        ResultSet rt=stm.executeQuery();
+        int value = 0;
+        boolean t=true;
+        while (rt.next()) {
+            try {
+                 value= Integer.parseInt(txtamount.getText());
+            }
+            catch (Exception ex){
+                txtamount.setPromptText("please enter integer value only");
+                System.out.println("please enter integer value only");
+                t=false;
+
+            }
+
+           if (rt.getInt("deposit")<value){
+               Alert alert = new Alert(Alert.AlertType.WARNING);
+               alert.setTitle("In sufficient Money");
+               alert.setContentText("You Don't Have enough money");
+               alert.showAndWait();
+           }
+            System.out.println("rt.getInt(\"deposit\")<value"+rt.getInt("deposit"));
+
+            if(t && rt.getInt("deposit")>value){
+            int x=rt.getInt("deposit")-value;
+            String sql1="update customer set deposit ='"+x+"' where id=?";
+            PreparedStatement st=con.prepareStatement(sql1);
+            st.setString(1,rt.getString("id"));
+            st.executeUpdate();
+            System.out.println(rt.getInt("deposit")-Integer.parseInt(txtamount.getText()));
+                txtbalance.setText(String.valueOf(x));
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Successfully Withdrawal ");
+                alert.setContentText("You Successfully Withdrawal  " +value+"  Birr");
+                alert.showAndWait();
+                txtname.clear();
+                txtbalance.clear();
+                txtaccnumber.clear();
+                txtamount.clear();
+            }}
+        Date now = new Date(System.currentTimeMillis());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String formattedDate = formatter.format(now);
+        System.out.println("logout "+readLogedAccount());
+        String idd=readLogedAccount();
+        String id= idd.trim();
+        System.out.println("iddd  "+id);
+        System.out.println("e=id  "+id.equals("e"));
+        String sqltr= "INSERT INTO transactionTwo (cust_id,date,event,amount) VALUES(?,?,?,?)";
+        PreparedStatement preptr = con.prepareStatement(sqltr);
+        preptr.setString(1, txtsearch.getText());
+        preptr.setString(2, formattedDate);
+        preptr.setString(3, "withdrawal");
+        preptr.setString(4, String.valueOf(value));
+        preptr.executeUpdate();
+        write_read();
+        }
+
+    @FXML
+    void depositbtn (ActionEvent event) throws SQLException, IOException {
+        String sql="select *from customer where id=?";
+        PreparedStatement stm=con.prepareStatement(sql);
+        stm.setString(1,txtsearch.getText());
+        ResultSet rt=stm.executeQuery();
+        int value = 0;
+        boolean t=true;
+        while (rt.next()) {
+            try {
+                value= Integer.parseInt(txtamount.getText());
+            }
+            catch (Exception ex){
+                txtamount.setPromptText("please enter integer value only");
+                System.out.println("please enter integer value only");
+                t=false;
+
+            }
+            int x=rt.getInt("deposit")+value;
+            String sql1="update customer set deposit ='"+x+"' where id=?";
+            PreparedStatement st=con.prepareStatement(sql1);
+            st.setString(1,rt.getString("id"));
+            st.executeUpdate();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Successfully Deposit ");
+            alert.setContentText("You Successfully Deposit  " +value+"  Birr");
+            alert.showAndWait();
+            txtname.clear();
+            txtbalance.clear();
+            txtaccnumber.clear();
+            txtamount.clear();
+            System.out.println(rt.getInt("deposit")-Integer.parseInt(txtamount.getText()));
+        }
+        Date now = new Date(System.currentTimeMillis());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        String formattedDate = formatter.format(now);
+        System.out.println("logout "+readLogedAccount());
+        String idd=readLogedAccount();
+        String id= idd.trim();
+        System.out.println("iddd  "+id);
+        System.out.println("e=id  "+id.equals("e"));
+        String sqltr= "INSERT INTO transactionTwo (cust_id,date,event,amount) VALUES(?,?,?,?)";
+        PreparedStatement preptr = con.prepareStatement(sqltr);
+        preptr.setString(1, txtsearch.getText());
+        preptr.setString(2, formattedDate);
+        preptr.setString(3, "deposit");
+        preptr.setString(4, txtamount.getText());
+        preptr.executeUpdate();
+
+
+        write_read();
+    }
+
+@FXML
+    public void deposit(ActionEvent event) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Deposit.fxml"));
+    Scene scene = new Scene(fxmlLoader.load());
+    HelloApplication.stage.setTitle("Login Successfully!");
+    HelloApplication.stage.setScene(scene);
+    }
+    @FXML
+    public void airtime(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Package.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        HelloApplication.stage.setTitle("Login Successfully!");
+        HelloApplication.stage.setScene(scene);
+    }
+}
+
+
